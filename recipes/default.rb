@@ -56,6 +56,7 @@ template node['supervisor']['conffile'] do
     :inet_password => node['supervisor']['inet_password'],
     :supervisord_minfds => node['supervisor']['minfds'],
     :supervisord_minprocs => node['supervisor']['minprocs'],
+    :supervisord_nocleanup => node['supervisor']['nocleanup'],
     :supervisor_version => node['supervisor']['version'],
     :socket_file => node['supervisor']['socket_file'],
   })
@@ -77,12 +78,12 @@ template "/etc/default/supervisor" do
 end
 
 init_template_dir = value_for_platform_family(
-  ["rhel", "fedora"] => "rhel",
+  ["rhel", "fedora", "centos", "amazon"] => "rhel",
   "debian" => "debian"
 )
 
 case node['platform']
-when "amazon", "centos", "debian", "fedora", "redhat", "ubuntu"
+when "amazon", "centos", "debian", "fedora", "redhat", "ubuntu", "raspbian"
   template "/etc/init.d/supervisor" do
     source "#{init_template_dir}/supervisor.init.erb"
     owner "root"
